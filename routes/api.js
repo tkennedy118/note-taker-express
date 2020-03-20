@@ -12,37 +12,48 @@ module.exports = function(app) {
 
     // route for getting saved notes from db.json
     app.get("/api/notes", (req, res) => {
-        console.log("inside get");
-        const data = JSON.parse(fs.readFileSync(filePath, "utf8"));
+        const data = fs.readFileSync(filePath, "utf8");
 
-        res.json(data);
+        if (data) {
+            res.json(JSON.parse(data))
+        } else {
+            res.end();
+        }
     });
 
     // route for posting new note to db.json
     app.post("/api/notes", (req, res) => {
-        console.log("inside post");
 
-        // retrieve request body and add id to newNote object
+        // retrieve request body and retrieve json file
         const newNote = req.body;
+        const data = fs.readFileSync(filePath, "utf8");
+        let newData;
+
+        // update values
         newNote.id = uniqid();
 
-        console.log(newNote);
+        if (data) {
+            newData = JSON.parse(data);
+            newData.push(newNote);
+        } else {
+            newData = [newNote];
+        }
 
-        fs.appendFileSync(filePath, newNote, "utf8");
+        fs.writeFileSync(filePath, JSON.stringify(newData), "utf8");
         res.json(newNote);
     });
 
     // route for deleting a note from the db.json file
     app.delete("/api/notes/:id", (req, res) => {
-        console.log("inside delete");
-        console.log(req.params.id);
-        const id = req.params.id;
-        const data = fs.readFileSync(filePath, "utf8");
-        console.log(data);
-        const notes = data.filter(o => o.id !== id);
-        console.log(notes);
 
-        fs.writeFileSync(filePath, notes, "utf8");
+        // retrieve id and retrive json file
+        const id = req.params.id;
+        const data = JSON.parse(fs.readFileSync(filePath, "utf8"));
+
+        // remove file with specified id
+        const notes = data.filter(o => o.id !== id);
+
+        fs.writeFileSync(filePath, JSON.stringify(notes), "utf8");
         res.json({ ok: true });
     });
 }
