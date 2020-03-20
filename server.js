@@ -18,7 +18,7 @@ app.use(express.json());
 /************************************* ROUTER *************************************/
 
 // point to series of route files
-require("./routes/api")(app);
+// require("./routes/api")(app);
 require("./routes/html")(app);
 
 
