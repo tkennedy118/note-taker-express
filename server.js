@@ -8,7 +8,7 @@ const express = require("express");
 const app = express();
 
 // set initial port
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3000;
 
 // set Express app to handle data parsing
 app.use(express.urlencoded({ extended: true }));
@@ -18,7 +18,7 @@ app.use(express.json());
 /************************************* ROUTER *************************************/
 
 // point to series of route files
-// require("./routes/api")(app);
+require("./routes/api")(app);
 require("./routes/html")(app);
 
 
